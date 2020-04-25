@@ -5,7 +5,9 @@ from selenium.webdriver.support.ui import Select
 import os
 import win32com.client as win32
 
-
+#Setting up selenium web driver. Can be adjusted to hide everything. At the time, there was a bug/feauture with chromedriver where 
+#minimized/hidden browser could not download without a promp, making the program not function. Until a work around is found, browser 
+#has to be visible
 options = webdriver.ChromeOptions()
 prefs= {'safebrowsing.enabled': 'false', 'download.default_directory': 'path'}
 options.add_experimental_option("prefs", prefs)
@@ -20,7 +22,9 @@ driver.get('https://dfeast2prweb2.dataforma.com/dflowslope/pages/security/LoginF
 
 
 
-
+#Logging into Dataforma website, you'll notice I'm using time.sleep(10) because different elements in the pages load at different times.
+#and if the user's internet is slow, selenium will fail to find the element and quit. Since the program is designed to run in the 
+#background, the extra time to generate the report will not be visible to the user.
 id_box = driver.find_element_by_name('servicecode')
 id_box.send_keys("Service code here")
 company_code = driver.find_element_by_name('B4')
@@ -58,6 +62,10 @@ export_button=driver.find_element_by_class_name('export-btn')
 export_button.click()
 
 xmlfile= "xml file path here"
+
+#Function to convert the XML report to a PDF file. I used VBA Macros and Excel to do this, as this method was much faster to delevop
+#and had the same end result. It couldd also be used for a longer period of time as the XML report formats change, it wouldn't mess
+#the XML to PDF converter function.
 def converter():
     xlapp = win32.Dispatch('Excel.Application')
     xlapp.DisplayAlerts = False
@@ -84,6 +92,7 @@ attachment = 'Path\\Estimator Work Load Report.pdf'
 contacts = """
 Emails for whoever you want to send it to."""
 
+#Email using Outlook in this case, can be personalized to whatever you like.
 def Emailer(text1, subject, recipient, cc):
     import win32com.client as win32
 
